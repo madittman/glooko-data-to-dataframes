@@ -12,7 +12,7 @@ class Clean(Stage):
 
     @staticmethod
     def process(dataframes: dict[str, pd.DataFrame]) -> dict[str, pd.DataFrame]:
-        all_columns: pd.DataFrame = dataframes["all_columns"].copy()
+        all_columns: pd.DataFrame = dataframes["all_columns"]
 
         # Drop row if every single value is NaN (this shouldn't be the case)
         all_columns = all_columns.dropna(axis=1, how="all")
