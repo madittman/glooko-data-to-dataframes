@@ -42,10 +42,10 @@ class RenameColumns(Stage):
         basal = basal.rename(
             columns={
                 "Timestamp": "time",
-                "Insulin Type": "insulin_type",
+                "Insulin Type": "basal_insulin_type",
                 "Duration (minutes)": "duration_in_min",
                 "Percentage (%)": "percentage",
-                "Rate": "rate",
+                "Rate": "basal_rate",
                 "Insulin Delivered (U)": "insulin_delivered_in_u",
                 "Serial Number": "serial_number",
             }
@@ -53,7 +53,7 @@ class RenameColumns(Stage):
         bolus = bolus.rename(
             columns={
                 "Timestamp": "time",
-                "Insulin Type": "insulin_type",
+                "Insulin Type": "bolus_insulin_type",
                 "Blood Glucose Input (mg/dl)": "glucose_value_in_mg/dl",
                 "Carbs Input (g)": "carbs_input_in_g",
                 "Carbs Ratio": "carbs_ratio",
