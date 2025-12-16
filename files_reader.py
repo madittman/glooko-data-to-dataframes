@@ -1,27 +1,17 @@
 import os
 import pandas as pd
+import re
 from pathlib import Path
 
 from exceptions import FilenamesChangedError
 
 
-# Global variable to check filenames on
-expected_filenames: list[str] = [
-    "alarms_data_1.csv",
+# These files need to be there
+basic_filenames: list[str] = [
     "bg_data_1.csv",
-    "carbs_data_1.csv",
     "cgm_data_1.csv",
-    "cgm_data_2.csv",
-    # in 'Insulin data' folder
     "basal_data_1.csv",
     "bolus_data_1.csv",
-    "insulin_data_1.csv",
-    # in 'Manual data' folder
-    "exercise_data_1.csv",
-    "food_data_1.csv",
-    "manual_insulin_data_1.csv",
-    "medication_data_1.csv",
-    "notes_data_1.csv",
 ]
 
 
@@ -33,7 +23,6 @@ class FilesReader:
     dataframes: dict[str, pd.DataFrame] = {
         "bg_data_1": pd.DataFrame(),
         "cgm_data_1": pd.DataFrame(),
-        "cgm_data_2": pd.DataFrame(),
         "basal_data_1": pd.DataFrame(),
         "bolus_data_1": pd.DataFrame(),
     }
@@ -42,7 +31,7 @@ class FilesReader:
         self.root_dir: Path = Path(root_dir)
 
         # Raise error if filenames have changed
-        if set(self.get_actual_filenames()) != set(expected_filenames):
+        if not set(basic_filenames) <= set(self.get_actual_filenames()):
             raise FilenamesChangedError("Filenames have changed")
 
         # Set dataframes
@@ -54,7 +43,8 @@ class FilesReader:
         for filepath in self.root_dir.rglob("*"):
             if filepath.is_file():
                 # Only keep filename
-                actual_filename: str = str(filepath).split("/")[-1]
+                parts: list[str] = re.split(r"[/\\]", str(filepath))
+                actual_filename: str = parts[-1]
                 actual_filenames.append(actual_filename)
         return actual_filenames
 
@@ -68,10 +58,15 @@ class FilesReader:
             os.path.join(str(self.root_dir), "cgm_data_1.csv"),
             skiprows=1,
         )
-        self.dataframes["cgm_data_2"] = pd.read_csv(
-            os.path.join(str(self.root_dir), "cgm_data_2.csv"),
-            skiprows=1,
-        )
+
+        # Only read in 'cgm_data_2.csv' if it is there
+        self.dataframes["cgm_data_2"] = pd.DataFrame()
+        if os.path.exists("cgm_data_2.csv"):
+            self.dataframes["cgm_data_2"] = pd.read_csv(
+                os.path.join(str(self.root_dir), "cgm_data_2.csv"),
+                skiprows=1,
+            )
+
         self.dataframes["basal_data_1"] = pd.read_csv(
             os.path.join(str(self.root_dir), "Insulin data/basal_data_1.csv"),
             skiprows=1,

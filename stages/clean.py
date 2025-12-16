@@ -14,9 +14,6 @@ class Clean(Stage):
     def process(dataframes: dict[str, pd.DataFrame]) -> dict[str, pd.DataFrame]:
         all_columns: pd.DataFrame = dataframes["all_columns"]
 
-        # Drop row if every single value is NaN (this shouldn't be the case)
-        all_columns = all_columns.dropna(axis=1, how="all")
-
         # Drop redundant columns
         all_columns = all_columns.drop(
             columns=[
@@ -47,6 +44,7 @@ class Clean(Stage):
         all_columns["insulin_delivered_in_u"] = all_columns[
             "insulin_delivered_in_u"
         ].round(2)
+
         all_columns["initial_delivery_in_u"] = all_columns[
             "initial_delivery_in_u"
         ].round(2)
@@ -54,6 +52,9 @@ class Clean(Stage):
             "extended_delivery_in_u"
         ].round(2)
         all_columns["basal_rate"] = all_columns["basal_rate"].round(2)
+
+        # Drop row if every single value is NaN (this shouldn't be the case)
+        all_columns = all_columns.dropna(axis=0, how="all")
 
         # Update dataframe
         dataframes = {

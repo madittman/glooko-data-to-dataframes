@@ -15,8 +15,9 @@ class RemoveDuplicates(Stage):
         basal: pd.DataFrame = dataframes["basal"]
         bolus: pd.DataFrame = dataframes["bolus"]
 
-        # Merge duplicates by summing duration_in_min and basal_rate
+        # Merge duplicates by summing up other columns
         basal = basal.groupby("time", as_index=False).sum()
+        bolus = bolus.groupby("time", as_index=False).sum()
 
         # Drop rows where all insulin units are 0
         bolus = bolus.drop(

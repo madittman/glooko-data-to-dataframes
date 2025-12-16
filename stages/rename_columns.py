@@ -13,7 +13,12 @@ class RenameColumns(Stage):
     def process(dataframes: dict[str, pd.DataFrame]) -> dict[str, pd.DataFrame]:
         glucose_values_1: pd.DataFrame = dataframes["bg_data_1"]
         glucose_values_2: pd.DataFrame = dataframes["cgm_data_1"]
-        glucose_values_3: pd.DataFrame = dataframes["cgm_data_2"]
+        glucose_values_3: pd.DataFrame = pd.DataFrame()
+
+        # cgm_data_2 may not be in dataframes
+        if "cgm_data_2" in dataframes:
+            glucose_values_3 = dataframes["cgm_data_2"]
+
         basal: pd.DataFrame = dataframes["basal_data_1"]
         bolus: pd.DataFrame = dataframes["bolus_data_1"]
 
@@ -32,13 +37,15 @@ class RenameColumns(Stage):
                 "Serial Number": "serial_number",
             }
         )
-        glucose_values_3 = glucose_values_3.rename(
-            columns={
-                "Timestamp": "time",
-                "CGM Glucose Value (mg/dl)": "glucose_value_in_mg/dl",
-                "Serial Number": "serial_number",
-            }
-        )
+        if not glucose_values_3.empty:
+            glucose_values_3 = glucose_values_3.rename(
+                columns={
+                    "Timestamp": "time",
+                    "CGM Glucose Value (mg/dl)": "glucose_value_in_mg/dl",
+                    "Serial Number": "serial_number",
+                }
+            )
+
         basal = basal.rename(
             columns={
                 "Timestamp": "time",

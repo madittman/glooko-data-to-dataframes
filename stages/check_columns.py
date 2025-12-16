@@ -65,10 +65,14 @@ class CheckColumns(Stage):
         ):
             raise ColumnsChangedError("Columns have changed in cgm_data_1")
 
-        if set(dataframes["cgm_data_2"].columns.tolist()) != set(
-            expected_columns_by_dataframe["cgm_data_2"]
-        ):
-            raise ColumnsChangedError("Columns have changed in cgm_data_2")
+        # Only read in 'cgm_data_2.csv' if it is there
+        if dataframes["cgm_data_2"].empty:
+            dataframes.pop("cgm_data_2")
+        else:
+            if set(dataframes["cgm_data_2"].columns.tolist()) != set(
+                expected_columns_by_dataframe["cgm_data_2"]
+            ):
+                raise ColumnsChangedError("Columns have changed in cgm_data_2")
 
         if set(dataframes["basal_data_1"].columns.tolist()) != set(
             expected_columns_by_dataframe["basal_data_1"]
