@@ -1,9 +1,28 @@
 import os
 import pandas as pd
-import re
 from pathlib import Path
 
 from exceptions import FilenamesChangedError
+
+
+# Global variable to check filenames on
+expected_filenames: list[str] = [
+    "alarms_data_1.csv",
+    "bg_data_1.csv",
+    "carbs_data_1.csv",
+    "cgm_data_1.csv",
+    "cgm_data_2.csv",
+    # in 'Insulin data' folder
+    "basal_data_1.csv",
+    "bolus_data_1.csv",
+    "insulin_data_1.csv",
+    # in 'Manual data' folder
+    "exercise_data_1.csv",
+    "food_data_1.csv",
+    "manual_insulin_data_1.csv",
+    "medication_data_1.csv",
+    "notes_data_1.csv",
+]
 
 
 class FilesReader:
@@ -23,7 +42,7 @@ class FilesReader:
         self.root_dir: Path = Path(root_dir)
 
         # Raise error if filenames have changed
-        if set(self.get_actual_filenames()) != set(self.dataframes.keys()):
+        if set(self.get_actual_filenames()) != set(expected_filenames):
             raise FilenamesChangedError("Filenames have changed")
 
         # Set dataframes
@@ -34,9 +53,9 @@ class FilesReader:
         actual_filenames: list[str] = []
         for filepath in self.root_dir.rglob("*"):
             if filepath.is_file():
-                # Only keep filename without ending
-                parts: list[str] = re.split(r"[/.]", str(filepath))
-                actual_filenames.append(parts[-2])
+                # Only keep filename
+                actual_filename: str = str(filepath).split("/")[-1]
+                actual_filenames.append(actual_filename)
         return actual_filenames
 
     def read_in_files(self) -> None:
