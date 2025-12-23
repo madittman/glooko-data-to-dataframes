@@ -14,7 +14,7 @@ class SplitIntoNormalizedTables(Stage):
     def process(dataframes: dict[str, pd.DataFrame]) -> dict[str, pd.DataFrame]:
         all_columns: pd.DataFrame = dataframes["all_columns"]
 
-        glucose_values: pd.DataFrame = all_columns[["time", "glucose_value_in_mg/dl"]]
+        gluco_vals: pd.DataFrame = all_columns[["time", "glucose_value_in_mg/dl"]]
         basal: pd.DataFrame = all_columns[["time", "duration_in_min", "basal_rate"]]
         bolus: pd.DataFrame = all_columns[
             [
@@ -27,8 +27,8 @@ class SplitIntoNormalizedTables(Stage):
         ]
 
         # Drop rows with no information
-        glucose_values = glucose_values.dropna(
-            how="all", subset=[col for col in glucose_values.columns if col != "time"]
+        gluco_vals = gluco_vals.dropna(
+            how="all", subset=[col for col in gluco_vals.columns if col != "time"]
         )
         basal = basal.dropna(
             how="all", subset=[col for col in basal.columns if col != "time"]
@@ -47,7 +47,7 @@ class SplitIntoNormalizedTables(Stage):
 
         # Update dataframes
         dataframes = {
-            "glucose_values": glucose_values,
+            "glucose_values": gluco_vals,
             "basal": basal,
             "bolus": bolus,
         }

@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from datetime import datetime
 
 from stages.base import Stage
 
@@ -24,6 +25,9 @@ class Clean(Stage):
                 "basal_insulin_type",
             ]
         )
+
+        # Convert timestamps to pandas.Timestamp
+        all_columns["time"] = pd.to_datetime(all_columns["time"])
 
         # Clip maximum glucose value to 400 (as the tslim cannot measure those values)
         all_columns["glucose_value_in_mg/dl"] = all_columns[
